@@ -56,18 +56,6 @@ const TodoApp = () => {
         setNote('')
     }
 
-    const handelSearch = (event) =>{
-        if(event.target.value === ""){
-            text = localStorage.getItem("TODO")
-            obj = JSON.parse(text)
-        }else{
-            console.log(event.target.value)
-            obj =  obj.filter((search) => {
-                return search.title.toLocaleLowerCase().match(event.target.value.toLocaleLowerCase()) || search.note.toLocaleLowerCase().match(event.target.value.toLocaleLowerCase()) 
-             })
-        }
-    }
-
   return (
     <div>
 
@@ -92,10 +80,6 @@ const TodoApp = () => {
                     </div>
                         <button className="btn btn--primary">{btn}</button>
                 </form>
-
-                <nav className="navbar">
-                    <input type="text" className="todo-form__input" onChange={handelSearch} placeholder="Search here"/>
-                </nav>
             </div>
         </header>
 
