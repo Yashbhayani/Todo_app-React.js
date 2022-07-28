@@ -1,46 +1,23 @@
-import React,{useState} from 'react'
+import React,{useState, useEffect} from 'react'
 import '../UI/TodoApp.css'
 
 let btn = "Submit"
 let TODO = []
-let text
-let obj
 let ID 
 const TodoApp = () => {
-    let View
     const [title, setTitle]  = useState('')
     const [note, setNote]  = useState('')
-    text = localStorage.getItem("TODO")
-    obj = JSON.parse(text)
-   
-    const SHOW = () =>{
-        if(obj !== undefined && obj !== null && obj !== "" && obj.length !== 0){
-            //console.log(obj)
-                View = obj.map((obj, index) => (
-                    <div className="card">
-                        <div className="card__header">
-                            <h3 className="card__title">{obj.title}</h3>
-                                <div className="card__remove-icon">
-                                <span className="material-icons-outlined" onClick={() => handleDelete(index)}> clear </span>
-                            </div>
-                        </div>
-                        <div className="card__body">
-                            <h5 className="card__text">{obj.note}</h5>
-                        </div>
-                        <div className="card__dropdown">
-                            <div className="card__dropdown__toggler">
-                                <span className="material-icons-outlined" onClick={() => handleEdit(index)}>edit</span>
-                            </div>
-                        </div>
-                    </div>
-            ))
-        }else{
-            View = "Data is Not edded"
-        }
-    }
+    const [obj, setObj]  = useState([])
+    let text;
+
+    useEffect(() => {
+        text = localStorage.getItem("TODO")
+        const obj1 = JSON.parse(text)
+        setObj(obj1)
+        console.log(obj.length)
+    })
     
-    SHOW()
-    
+
     const handleSubmitData = (e) =>{
         e.preventDefault()
         TODO = JSON.parse(localStorage.getItem("TODO"))?JSON.parse(localStorage.getItem("TODO")):[]
@@ -77,7 +54,18 @@ const TodoApp = () => {
         localStorage.setItem("TODO",JSON.stringify(obj))
         setTitle('')
         setNote('')
-        SHOW()
+    }
+
+    const handelSearch = (event) =>{
+        if(event.target.value === ""){
+            text = localStorage.getItem("TODO")
+            obj = JSON.parse(text)
+        }else{
+            console.log(event.target.value)
+            obj =  obj.filter((search) => {
+                return search.title.toLocaleLowerCase().match(event.target.value.toLocaleLowerCase()) || search.note.toLocaleLowerCase().match(event.target.value.toLocaleLowerCase()) 
+             })
+        }
     }
 
   return (
@@ -104,6 +92,10 @@ const TodoApp = () => {
                     </div>
                         <button className="btn btn--primary">{btn}</button>
                 </form>
+
+                <nav className="navbar">
+                    <input type="text" className="todo-form__input" onChange={handelSearch} placeholder="Search here"/>
+                </nav>
             </div>
         </header>
 
@@ -111,7 +103,30 @@ const TodoApp = () => {
             <div className="container">
                 <div className="cards">
                     <div className="cards__row">
-                            { View }
+                        {obj.length === 0 && <h3>Data is Not edded</h3> }
+                            
+                            { obj.length >= 0 &&
+
+                                obj.map((obj, index) => (
+                                    <div className="card" key={index} >
+                                        <div className="card__header">
+                                            <h3 className="card__title">{obj.title}</h3>
+                                                <div className="card__remove-icon">
+                                                <span className="material-icons-outlined" onClick={() => handleDelete(index)}> clear </span>
+                                            </div>
+                                        </div>
+                                        <div className="card__body">
+                                            <h5 className="card__text">{obj.note}</h5>
+                                        </div>
+                                        <div className="card__dropdown">
+                                            <div className="card__dropdown__toggler">
+                                                <span className="material-icons-outlined" onClick={() => handleEdit(index)}>edit</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+
+                            }
                     </div>
                 </div>
             </div>
